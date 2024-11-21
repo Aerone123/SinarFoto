@@ -13,7 +13,8 @@ class ProdukController extends Controller
      */
     public function index()
     {
-        return view('product');
+        $data['produk'] =\App\Models\Produk::latest()->paginate(10);
+        return view('product',$data);
     }
 
     /**
