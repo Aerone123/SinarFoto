@@ -91,7 +91,7 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <div class="mt-3 pl-3">
+                        <div class="mt-3 px-2">
                             {{ $produk->links() }}
                         </div>
                     </div>
