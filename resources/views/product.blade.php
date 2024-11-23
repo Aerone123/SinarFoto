@@ -9,6 +9,15 @@
                 <div class="card-header pb-0">
                     <h6>Product Table</h6>
                 </div>
+                <form action="">
+                    <div class="input-group px-4 mb-3">
+                        <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
+                        <input type="text" class="form-control w-25" name="search_produk" placeholder="Type here..." value="{{request('search_produk')}}">
+                    </div>
+                    <div class="px-4">
+                        <button class="btn btn-primary" type="submit">Cari</button>
+                    </div>
+                </form>
                 <div class="card-body px-0 pt-0 pb-2">
                     <div class="table-responsive p-0">
                         <table class="table align-items-center mb-0">
@@ -26,8 +35,6 @@
                             </thead>
                             <tbody>
                                 <tr>
-
-
                                 </tr>
                                 @foreach ($produk as $item)
                                 <tr>
@@ -91,8 +98,14 @@
                                 @endforeach
                             </tbody>
                         </table>
-                        <div class="mt-3 px-2">
-                            {{ $produk->links() }}
+                        <div class="d-flex justify-content-between align-items-center mt-3 px-3">
+                            <div>
+                                {{ $produk->links() }}
+                            </div>
+                            <div>
+                                <a href="" class="btn btn-primary" data-bs-toggle="modal"
+                                    data-bs-target="#modalTambah">Tambah Produk</a>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -356,5 +369,40 @@
     @include('layouts.footers.auth.footer')
 </div>
 
+<div class="modal fade" id="modalTambah" tabindex="-1" aria-labelledby="modalTambahLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalTambahLabel">Tambah Produk</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form method="POST" action="{{ route('produk.store') }}" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="foto">Foto Pasien (jpg,jpeg,png)</label>
+                        <input type="file" class="form-control" id="foto" name="foto">
+                    </div>
+                    <div class="mb-3">
+                        <label for="namaProduk" class="form-label">Nama Produk</label>
+                        <input type="text" class="form-control" id="namaProduk" name="nama_produk" placeholder="Masukkan nama produk" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="hargaProduk" class="form-label">Harga</label>
+                        <input type="number" class="form-control" id="hargaProduk" name="harga" placeholder="Masukkan harga produk" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="stokProduk" class="form-label">Stok</label>
+                        <input type="number" class="form-control" id="stokProduk" name="stok" placeholder="Masukkan jumlah stok" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">Simpan</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
 
 @endsection

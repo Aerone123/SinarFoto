@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Produk;
 use App\Http\Requests\StoreProdukRequest;
 use App\Http\Requests\UpdateProdukRequest;
-
+use Illuminate\Http\Request;
 class ProdukController extends Controller
 {
     /**
@@ -13,7 +13,11 @@ class ProdukController extends Controller
      */
     public function index()
     {
-        $data['produk'] =\App\Models\Produk::latest()->paginate(10);
+        if(request()->filled('search_produk')){
+            $data['produk'] = Produk::search(request('search_produk'))->paginate(10);
+        }else{
+            $data['produk'] = Produk::latest()->paginate(10);
+        }
         return view('product',$data);
     }
 
@@ -22,15 +26,26 @@ class ProdukController extends Controller
      */
     public function create()
     {
-        //
+        
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreProdukRequest $request)
+    public function store(Request $request)
     {
-        //
+        $requestData = $request->validate([
+            'nama_produk' => 'required',
+            'harga' => 'required|numeric',
+            'stok'=>'required|numeric',
+            'foto'=>'nullable|image:jpeg,jpg,png',
+        ]);
+
+        $produk = new \App\Models\Produk();
+        $produk->fill($requestData);
+        $produk->foto=$request->file('foto')->store('public');
+        $produk->save();
+        return back();
     }
 
     /**
@@ -64,4 +79,5 @@ class ProdukController extends Controller
     {
         //
     }
+
 }
