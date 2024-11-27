@@ -27,6 +27,7 @@ Route::group(['middleware' => 'auth'], function () {
     Route::resource('transaksi', TransaksiController::class);
 	Route::get('/{page}', [PageController::class, 'index'])->name('page');
 	Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+	Route::post('/transaksi', [TransaksiController::class, 'store'])->name('transaksi.store');
 });
 
 

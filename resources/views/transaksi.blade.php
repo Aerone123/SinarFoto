@@ -1,7 +1,7 @@
 @extends('layouts.app', ['class' => 'g-sidenav-show bg-gray-100'])
 
 @section('content')
-@include('layouts.navbars.auth.topnav', ['title' => 'Tables'])
+@include('layouts.navbars.auth.topnav', ['title' => 'Transaksi'])
 <div class="container-fluid py-4">
     <div class="row">
         <!-- Wrapper with Card -->
@@ -67,12 +67,66 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <div class="d-flex justify-content-around mb-3">
-                                    <button class="btn btn-outline-secondary">Cash</button>
-                                    <button class="btn btn-outline-primary">Card</button>
-                                    <button class="btn btn-outline-secondary">E-Wallet</button>
-                                </div>
-                                <button class="btn btn-primary w-100" id="print-bill">Print Bills</button>
+                                <button class="btn btn-primary w-100" id="add-transaction">Add Transaksi</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-12">
+            <div class="card mb-4">
+                <div class="card-header pb-0">
+                    <h6>Transaksi Table</h6>
+                </div>
+                <div class="card-body px-0 pt-0 pb-2">
+                    <div class="table-responsive p-0">
+                        <table class="table align-items-center mb-0">
+                            <thead>
+                                <tr>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ">
+                                        Tanggal</th>
+                                    <th class="text-uppercase text-secondary text-xxs font-weight-bolder opacity-7 ps-2">
+                                        Diskon</th>
+                                    <th
+                                        class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
+                                        Total</th>
+                                    <th class="text-secondary opacity-7"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                </tr>
+                                @foreach ($transaksi as $item)
+                                <tr>
+                                    <td>
+                                        <p class="text-xs font-weight-bold mb-0">{{ $item->tanggal }}</p>
+                                    </td>
+                                    <td>
+                                        <p class="text-xs font-weight-bold mb-0">Rp. {{ number_format($item->diskon,2) }}</p>
+                                    </td>
+                                    <td class="align-middle text-center text-sm">
+                                        <span class="badge badge-sm bg-gradient-success">Rp. {{ number_format($item->total_pembayaran,2) }}</span>
+                                    </td>
+                                    <td class="align-middle">
+                                        <a href="" class="text-secondary font-weight-bold text-xs" data-bs-toggle="modal"
+                                            data-bs-target="#modalDetail{{ $item->id }}">
+                                            Detail
+                                        </a>
+                                    </td>
+                                </tr>
+
+
+                                @endforeach
+                            </tbody>
+                        </table>
+                        <div class="d-flex justify-content-between align-items-center mt-3 px-3">
+                            <div>
+                                {{ $transaksi->links() }}
                             </div>
                         </div>
                     </div>
@@ -83,12 +137,53 @@
 
     @include('layouts.footers.auth.footer')
 </div>
-</div>
 
+@foreach ($transaksi as $item)
+<div class="modal fade" id="modalDetail{{ $item->id }}" tabindex="-1" aria-labelledby="modalLabel{{ $item->id }}" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalLabel{{ $item->id }}">Detail Transaksi Produk</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Tabel Detail Transaksi -->
+                <div class="mb-3">
+                    <h6>ID Transaksi</h6>
+                    <p>{{ $item->id }}</p>
+                    <h6>Tanggal Transaksi</h6>
+                    <p>{{ $item->tanggal }}</p>
+                    <h6>Diskon</h6>
+                    <p>Rp. {{ number_format($item->diskon,2) }}</p>
+                    <h6>Total Pembayaran</h6>
+                    <p>Rp. {{ number_format($item->total_pembayaran,2) }}</p>
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Produk</th>
+                                <th>Jumlah</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($item->detailtransaksi as $detailTransaksi)
+                            <tr>
+                                <td>{{ $detailTransaksi->produk->nama_produk }}</td>
+                                <td>{{ $detailTransaksi->jumlah }}</td>
+                                <td>Rp {{ number_format($detailTransaksi->subtotal, 2) }}</td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@endforeach
 <!-- JavaScript to handle adding items to the current order -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        // Initialize the order and subtotal variables
+    document.addEventListener('DOMContentLoaded', function() {
         let orderItems = [];
         let subtotal = 0;
 
@@ -99,15 +194,18 @@
                 let name = this.getAttribute('data-nama');
                 let price = parseFloat(this.getAttribute('data-harga'));
 
-                // Check if the product is already in the order
                 let existingItem = orderItems.find(item => item.id === id);
                 if (existingItem) {
                     existingItem.quantity++;
                 } else {
-                    orderItems.push({ id, name, price, quantity: 1 });
+                    orderItems.push({
+                        id,
+                        name,
+                        price,
+                        quantity: 1
+                    });
                 }
 
-                // Update the order display
                 updateOrder();
             });
         });
@@ -125,16 +223,13 @@
 
         // Update the order list and totals
         function updateOrder() {
-            // Clear the current order display
             const orderList = document.getElementById('order-list');
             orderList.innerHTML = '';
 
-            // Update subtotal and total
             subtotal = 0;
             orderItems.forEach(item => {
                 subtotal += item.price * item.quantity;
 
-                // Add each item to the order list
                 const listItem = document.createElement('li');
                 listItem.classList.add('list-group-item', 'd-flex', 'justify-content-between', 'align-items-center');
                 listItem.innerHTML = `
@@ -147,17 +242,62 @@
                 orderList.appendChild(listItem);
             });
 
-            // Get discount value from input
             let discount = parseFloat(document.getElementById('discount-input').value) || 0;
-            discount = Math.min(discount, subtotal); // Ensure discount doesn't exceed subtotal
+            discount = Math.min(discount, subtotal);
 
-            // Calculate tax and total
             const total = subtotal - discount;
 
-            // Update the display
             document.getElementById('subtotal').textContent = `Rp ${subtotal.toFixed(2)}`;
             document.getElementById('total').textContent = `Rp ${total.toFixed(2)}`;
         }
+
+        // Handle Add Transaksi click
+        document.getElementById('add-transaction').addEventListener('click', function() {
+            const discount = parseFloat(document.getElementById('discount-input').value) || 0;
+            const total = parseFloat(document.getElementById('total').textContent.replace('Rp ', '').replace(',', '').trim());
+
+            if (orderItems.length === 0) {
+                alert("No items in the order.");
+                return;
+            }
+
+            // Prepare data for AJAX request
+            const orderData = {
+                tanggal: new Date().toISOString().split('T')[0], // Current date in YYYY-MM-DD format
+                total_pembayaran: total,
+                diskon: discount,
+                items: orderItems.map(item => ({
+                    produk_id: item.id,
+                    jumlah: item.quantity,
+                    subtotal: item.price * item.quantity
+                }))
+            };
+
+            // Send AJAX request to add transaction
+            fetch("{{ route('transaksi.store') }}", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                    },
+                    body: JSON.stringify(orderData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert("Transaction added successfully.");
+                        orderItems = [];
+                        updateOrder(); // Reset order
+                        location.reload();
+                    } else {
+                        alert("Failed to add transaction.");
+                    }
+                })
+                .catch(error => {
+                    console.error("Error:", error);
+                    alert("An error occurred while adding the transaction.");
+                });
+        });
     });
 </script>
 @endsection

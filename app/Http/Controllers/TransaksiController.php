@@ -6,7 +6,9 @@ use App\Models\Transaksi;
 use App\Http\Requests\StoreTransaksiRequest;
 use App\Http\Requests\UpdateTransaksiRequest;
 use App\Models\Produk;
-
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Models\DetailTransaksi;
 class TransaksiController extends Controller
 {
     /**
@@ -19,6 +21,7 @@ class TransaksiController extends Controller
         }else{
             $data['produk'] = Produk::get();    
         }
+        $data['transaksi'] = Transaksi::latest()->paginate(10);
         return view('transaksi')->with($data);
     }
 
@@ -33,9 +36,35 @@ class TransaksiController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(StoreTransaksiRequest $request)
+    public function store(Request $request)
     {
-        //
+        DB::beginTransaction();
+
+        try {
+            // Create new transaksi record
+            $transaksi = Transaksi::create([
+                'tanggal' => $request->tanggal,
+                'total_pembayaran' => $request->total_pembayaran,
+                'diskon' => $request->diskon
+            ]);
+
+            // Insert each product into detail_transaksis table
+            foreach ($request->items as $item) {
+                DetailTransaksi::create([
+                    'produk_id' => $item['produk_id'],
+                    'transaksi_id' => $transaksi->id,
+                    'jumlah' => $item['jumlah'],
+                    'subtotal' => $item['subtotal']
+                ]);
+            }
+
+            DB::commit();
+            return response()->json(['success' => true]);
+
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['success' => false, 'error' => $e->getMessage()]);
+        }
     }
 
     /**
@@ -43,7 +72,7 @@ class TransaksiController extends Controller
      */
     public function show(Transaksi $transaksi)
     {
-        //
+        
     }
 
     /**
