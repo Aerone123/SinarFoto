@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->date('tanggal');
             $table->integer('total_pembayaran');
+            $table->integer('diskon');
             $table->timestamps();
         });
     }

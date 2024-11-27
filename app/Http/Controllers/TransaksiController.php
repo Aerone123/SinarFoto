@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Transaksi;
 use App\Http\Requests\StoreTransaksiRequest;
 use App\Http\Requests\UpdateTransaksiRequest;
+use App\Models\Produk;
 
 class TransaksiController extends Controller
 {
@@ -13,7 +14,12 @@ class TransaksiController extends Controller
      */
     public function index()
     {
-        return view('transaksi');
+        if(request()->filled('search_produk')){
+            $data['produk'] = Produk::search(request('search_produk'))->get();
+        }else{
+            $data['produk'] = Produk::get();    
+        }
+        return view('transaksi')->with($data);
     }
 
     /**

@@ -15,6 +15,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        \App\Models\Produk::factory(20)->create();
+        DB::table('users')->insert([
+            'username' => 'admin',
+            'firstname' => 'Admin',
+            'lastname' => 'Admin',
+            'email' => 'admin@argon.com',
+            'password' => bcrypt('secret')
+        ]);
     }
 }
