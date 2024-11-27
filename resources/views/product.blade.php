@@ -1,7 +1,7 @@
 @extends('layouts.app', ['class' => 'g-sidenav-show bg-gray-100'])
 
 @section('content')
-@include('layouts.navbars.auth.topnav', ['title' => 'Tables'])
+@include('layouts.navbars.auth.topnav', ['title' => 'Product'])
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
@@ -52,10 +52,10 @@
                                         </div>
                                     </td>
                                     <td>
-                                        <p class="text-xs font-weight-bold mb-0">Rp. {{ $item->harga }}</p>
+                                        <p class="text-xs font-weight-bold mb-0">Rp {{ number_format($item->harga,2) }}</p>
                                     </td>
                                     <td class="align-middle text-center text-sm">
-                                        <span class="badge badge-sm bg-gradient-success">{{ $item->stok }}</span>
+                                        <span class="badge badge-sm bg-gradient-success">{{ number_format($item->stok) }}</span>
                                     </td>
                                     <td class="align-middle">
                                         <a href="" class="text-secondary font-weight-bold text-xs" data-bs-toggle="modal"
