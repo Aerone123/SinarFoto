@@ -75,7 +75,10 @@
                                                 <form method="POST" action="{{ route('produk.update', $item->id) }}">
                                                     @csrf
                                                     @method('PUT')
-
+                                                    <div class="mb-3 " style="display: none;">
+                                                        <label for="idProduk{{ $item->id }}" class="form-label">Id Produk</label>
+                                                        <input type="text" class="form-control" id="idProduk{{ $item->id }}" name="id" value="{{ $item->id }}" required>
+                                                    </div>
                                                     <div class="mb-3">
                                                         <label for="namaProduk{{ $item->id }}" class="form-label">Nama Produk</label>
                                                         <input type="text" class="form-control" id="namaProduk{{ $item->id }}" name="nama_produk" value="{{ $item->nama_produk }}" required>

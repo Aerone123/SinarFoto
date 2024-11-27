@@ -27,7 +27,7 @@
                                 @foreach ($produk as $item)
                                 <div class="col-sm-3">
                                     <div class="card">
-                                        <img src="{{ \Storage::url($item->foto) }}" class="card-img-top" alt="{{ $item->name }}">
+                                        <img src="{{ \Storage::url($item->foto) }}" class="card-img-top" alt="{{ $item->name }}" style="max-height: 150px;">
                                         <div class="card-body text-center">
                                             <h5 class="card-title">{{ $item->nama_produk }}</h5>
                                             <p class="text-success fw-bold">Rp {{ number_format($item->harga, 2) }}</p>

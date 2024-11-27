@@ -67,9 +67,18 @@ class ProdukController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(UpdateProdukRequest $request, Produk $produk)
+    public function update(Request $request, string $id)
     {
-        //
+        $requestData = $request->validate([
+            'id' => 'required|exists:produks,id',
+            'nama_produk' => 'required',
+            'harga' => 'required|numeric',
+            'stok'=>'required|numeric',
+        ]);
+        $produk = \App\Models\Produk::findOrFail($id);
+        $produk->fill($requestData);
+        $produk->save();
+        return back();
     }
 
     /**
