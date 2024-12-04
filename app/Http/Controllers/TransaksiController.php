@@ -9,6 +9,7 @@ use App\Models\Produk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Models\DetailTransaksi;
+
 class TransaksiController extends Controller
 {
     /**
@@ -16,10 +17,10 @@ class TransaksiController extends Controller
      */
     public function index()
     {
-        if(request()->filled('search_produk')){
+        if (request()->filled('search_produk')) {
             $data['produk'] = Produk::search(request('search_produk'))->get();
-        }else{
-            $data['produk'] = Produk::get();    
+        } else {
+            $data['produk'] = Produk::get();
         }
         $data['transaksi'] = Transaksi::latest()->paginate(10);
         return view('transaksi')->with($data);
@@ -50,6 +51,15 @@ class TransaksiController extends Controller
 
             // Insert each product into detail_transaksis table
             foreach ($request->items as $item) {
+                $produk = Produk::find($item['produk_id']);
+
+                if ($produk->stok >= $item['jumlah']) {
+                    $produk->stok -= $item['jumlah'];
+                    $produk->save();
+                } else{
+                    return response()->json(['success' => false, 'error' => 'Stok produk tidak mencukupi']);
+                }
+
                 DetailTransaksi::create([
                     'produk_id' => $item['produk_id'],
                     'transaksi_id' => $transaksi->id,
@@ -60,7 +70,6 @@ class TransaksiController extends Controller
 
             DB::commit();
             return response()->json(['success' => true]);
-
         } catch (\Exception $e) {
             DB::rollBack();
             return response()->json(['success' => false, 'error' => $e->getMessage()]);
@@ -70,10 +79,7 @@ class TransaksiController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Transaksi $transaksi)
-    {
-        
-    }
+    public function show(Transaksi $transaksi) {}
 
     /**
      * Show the form for editing the specified resource.

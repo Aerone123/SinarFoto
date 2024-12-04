@@ -1,4 +1,4 @@
-    {
+{
     "$schema": "https://getcomposer.org/schema.json",
     "name": "laravel/laravel",
     "type": "project",
@@ -12,7 +12,8 @@
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "laravel/ui": "^4.5",
-        "nicolaslopezj/searchable": "^1.13"
+        "nicolaslopezj/searchable": "^1.13",
+        "realrashid/sweet-alert": "^7.2"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
