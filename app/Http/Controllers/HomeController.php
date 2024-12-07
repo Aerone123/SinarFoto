@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Transaksi;
-
+use App\Models\Produk;
 class HomeController extends Controller
 {
     /**
@@ -25,6 +25,7 @@ class HomeController extends Controller
      */
     public function index()
     {
+        $data['productsOutOfStock'] = Produk::where('stok', 0)->get();
         $currentMonth = Carbon::now()->month;
         $currentYear = Carbon::now()->year;
 
@@ -62,7 +63,20 @@ class HomeController extends Controller
         }
 
         $data['percentageChangePenjualan'] = $percentageChangePenjualan;
-        
+
+        // Mengambil total transaksi untuk 12 bulan terakhir
+        $data['transaksiPerBulan'] = [];
+        $now = Carbon::now();
+
+        for ($i = 0; $i < 12; $i++) {
+            $month = $now->copy()->subMonths($i);
+            $data['transaksiPerBulan'][$month->format('M Y')] = Transaksi::whereYear('tanggal', $month->year)
+                ->whereMonth('tanggal', $month->month)
+                ->sum('total_pembayaran');
+        }
+
+        $data['transaksiPerBulan'] = array_reverse($data['transaksiPerBulan'], true);
+
         return view('pages.dashboard', $data);
     }
 }
