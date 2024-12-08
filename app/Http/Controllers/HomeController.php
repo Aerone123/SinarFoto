@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use Carbon\Carbon;
 use App\Models\Transaksi;
 use App\Models\Produk;
+
+
 class HomeController extends Controller
 {
     /**

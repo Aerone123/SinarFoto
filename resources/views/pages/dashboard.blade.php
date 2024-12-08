@@ -155,7 +155,7 @@
                                     <p class="text-xs font-weight-bold mb-0">Rp {{ number_format($item->harga, 2) }}</p>
                                 </td>
                                 <td class="align-middle text-center text-sm">
-                                    <span class="badge badge-sm bg-gradient-success">{{ number_format($item->stok) }}</span>
+                                    <span class="badge badge-sm bg-gradient-danger">{{ number_format($item->stok) }}</span>
                                 </td>
                                 <td class="align-middle">
                                     <a href="" class="text-secondary font-weight-bold text-xs" data-bs-toggle="modal" data-bs-target="#modalEdit{{ $item->id }}">

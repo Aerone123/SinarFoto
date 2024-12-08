@@ -55,7 +55,11 @@
                                         <p class="text-xs font-weight-bold mb-0">Rp {{ number_format($item->harga,2) }}</p>
                                     </td>
                                     <td class="align-middle text-center text-sm">
+                                        @if($item->stok == 0)
+                                        <span class="badge badge-sm bg-gradient-danger">{{ number_format($item->stok) }}</span>
+                                        @else
                                         <span class="badge badge-sm bg-gradient-success">{{ number_format($item->stok) }}</span>
+                                        @endif
                                     </td>
                                     <td class="align-middle">
                                         <a href="" class="text-secondary font-weight-bold text-xs" data-bs-toggle="modal"
@@ -115,7 +119,7 @@
             </div>
         </div>
     </div>
-    
+
     @include('layouts.footers.auth.footer')
 </div>
 
