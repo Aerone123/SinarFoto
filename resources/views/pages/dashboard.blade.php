@@ -12,13 +12,13 @@
                             <div class="numbers">
                                 <p class="text-sm mb-0 text-uppercase font-weight-bold">Transaksi Bulan ini</p>
                                 <h5 class="font-weight-bolder">
-                                    {{ $transaksiBulanIni }}
+                                {{ number_format($transaksiBulanIni) }}
                                 </h5>
                                 <p class="mb-0">
                                     @if($percentageChange < 0)
                                         <span class="text-danger text-sm font-weight-bolder">{{ number_format($percentageChange, 2) }}%</span>
                                         @else
-                                        <span class="text-success text-sm font-weight-bolder">{{ number_format($percentageChange, 2) }}%</span>
+                                        <span class="text-success text-sm font-weight-bolder">+{{ number_format($percentageChange, 2) }}%</span>
                                         @endif
                                         since last month
                                 </p>
@@ -41,13 +41,13 @@
                             <div class="numbers">
                                 <p class="text-sm mb-0 text-uppercase font-weight-bold">Penjualan Bulan Ini</p>
                                 <h5 class="font-weight-bolder">
-                                    Rp. {{ $penjualanNow }}
+                                    Rp. {{ number_format($penjualanNow) }}
                                 </h5>
                                 <p class="mb-0">
                                     @if($percentageChangePenjualan < 0)
                                         <span class="text-danger text-sm font-weight-bolder">{{ number_format($percentageChangePenjualan, 2) }}%</span>
                                         @else
-                                        <span class="text-success text-sm font-weight-bolder">{{ number_format($percentageChangePenjualan, 2) }}%</span>
+                                        <span class="text-success text-sm font-weight-bolder">+{{ number_format($percentageChangePenjualan, 2) }}%</span>
                                         @endif
                                         since last month
                                 </p>

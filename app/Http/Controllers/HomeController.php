@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Carbon\Carbon;
+use App\Models\DetailTransaksi;
 use App\Models\Transaksi;
 use App\Models\Produk;
 
@@ -30,6 +31,8 @@ class HomeController extends Controller
         $data['productsOutOfStock'] = Produk::where('stok', 0)->get();
         $currentMonth = Carbon::now()->month;
         $currentYear = Carbon::now()->year;
+
+        
 
         $data['transaksiBulanIni'] = Transaksi::whereYear('tanggal', $currentYear)
             ->whereMonth('tanggal', $currentMonth)
