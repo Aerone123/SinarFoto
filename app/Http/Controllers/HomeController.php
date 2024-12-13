@@ -7,7 +7,7 @@ use Carbon\Carbon;
 use App\Models\DetailTransaksi;
 use App\Models\Transaksi;
 use App\Models\Produk;
-
+use Illuminate\Support\Facades\DB;
 
 class HomeController extends Controller
 {
@@ -31,8 +31,6 @@ class HomeController extends Controller
         $data['productsOutOfStock'] = Produk::where('stok', 0)->get();
         $currentMonth = Carbon::now()->month;
         $currentYear = Carbon::now()->year;
-
-        
 
         $data['transaksiBulanIni'] = Transaksi::whereYear('tanggal', $currentYear)
             ->whereMonth('tanggal', $currentMonth)
@@ -69,7 +67,6 @@ class HomeController extends Controller
 
         $data['percentageChangePenjualan'] = $percentageChangePenjualan;
 
-        // Mengambil total transaksi untuk 12 bulan terakhir
         $data['transaksiPerBulan'] = [];
         $now = Carbon::now();
 
@@ -81,6 +78,17 @@ class HomeController extends Controller
         }
 
         $data['transaksiPerBulan'] = array_reverse($data['transaksiPerBulan'], true);
+
+        // Get the top-selling products today
+        $today = Carbon::today();
+        $data['produkTerlarisHariIni'] = Produk::select('produks.nama_produk', 'produks.stok','produks.foto', DB::raw('SUM(detail_transaksis.jumlah) as total_terjual'))
+            ->join('detail_transaksis', 'produks.id', '=', 'detail_transaksis.produk_id')
+            ->join('transaksis', 'detail_transaksis.transaksi_id', '=', 'transaksis.id')
+            ->whereDate('transaksis.tanggal', $today)
+            ->groupBy('produks.id', 'produks.nama_produk', 'produks.stok')
+            ->orderBy('total_terjual', 'DESC')
+            ->take(5)
+            ->get();
 
         return view('pages.dashboard', $data);
     }

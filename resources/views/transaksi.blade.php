@@ -15,7 +15,7 @@
                                 <form action="">
                                     <div class="input-group mb-3">
                                         <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
-                                        <input type="text" class="form-control w-25" name="search_produk" placeholder="Type here..." value="{{request('search_produk')}}">
+                                        <input type="text" class="form-control w-25" name="search_produk" placeholder="Ketik di sini..." value="{{request('search_produk')}}">
                                     </div>
                                     <div class="">
                                         <button class="btn btn-primary" type="submit">Cari</button>
@@ -45,8 +45,8 @@
                         <div class="card">
                             <div class="card-header bg-light">
                                 <div class="d-flex justify-content-between">
-                                    <span>Current Order</span>
-                                    <button class="btn btn-sm btn-outline-danger" id="clear-all">Clear All</button>
+                                    <span>Order Saat Ini</span>
+                                    <button class="btn btn-sm btn-outline-danger" id="clear-all">Bersihkan semua</button>
                                 </div>
                             </div>
                             <div class="card-body">
@@ -67,7 +67,7 @@
                                 </div>
                             </div>
                             <div class="card-footer">
-                                <button class="btn btn-primary w-100" id="add-transaction">Add Transaksi</button>
+                                <button class="btn btn-primary w-100" id="add-transaction">Tambah Transaksi</button>
                             </div>
                         </div>
                     </div>

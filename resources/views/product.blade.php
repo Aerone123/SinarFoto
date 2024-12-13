@@ -1,18 +1,18 @@
 @extends('layouts.app', ['class' => 'g-sidenav-show bg-gray-100'])
 
 @section('content')
-@include('layouts.navbars.auth.topnav', ['title' => 'Product'])
+@include('layouts.navbars.auth.topnav', ['title' => 'Produk'])
 <div class="container-fluid">
     <div class="row">
         <div class="col-12">
             <div class="card mb-4">
                 <div class="card-header pb-0">
-                    <h6>Product Table</h6>
+                    <h6>Tabel Produk</h6>
                 </div>
                 <form action="">
                     <div class="input-group px-4 mb-3">
                         <span class="input-group-text text-body"><i class="fas fa-search" aria-hidden="true"></i></span>
-                        <input type="text" class="form-control w-25" name="search_produk" placeholder="Type here..." value="{{request('search_produk')}}">
+                        <input type="text" class="form-control w-25" name="search_produk" placeholder="Ketik di sini..." value="{{request('search_produk')}}">
                     </div>
                     <div class="px-4">
                         <button class="btn btn-primary" type="submit">Cari</button>
