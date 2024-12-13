@@ -39,6 +39,14 @@ class TransaksiController extends Controller
      */
     public function store(Request $request)
     {
+        // Check stock availability before starting the transaction
+        foreach ($request->items as $item) {
+            $produk = Produk::find($item['produk_id']);
+            if ($produk->stok < $item['jumlah']) {
+                return response()->json(['success' => false, 'error' => 'Stok produk tidak mencukupi untuk ' . $produk->nama_produk]);
+            }
+        }
+
         DB::beginTransaction();
 
         try {
@@ -53,12 +61,9 @@ class TransaksiController extends Controller
             foreach ($request->items as $item) {
                 $produk = Produk::find($item['produk_id']);
 
-                if ($produk->stok >= $item['jumlah']) {
-                    $produk->stok -= $item['jumlah'];
-                    $produk->save();
-                } else{
-                    return response()->json(['success' => false, 'error' => 'Stok produk tidak mencukupi']);
-                }
+                // Deduct stock after confirming availability
+                $produk->stok -= $item['jumlah'];
+                $produk->save();
 
                 DetailTransaksi::create([
                     'produk_id' => $item['produk_id'],

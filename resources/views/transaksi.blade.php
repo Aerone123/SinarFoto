@@ -4,11 +4,9 @@
 @include('layouts.navbars.auth.topnav', ['title' => 'Transaksi'])
 <div class="container-fluid py-4">
     <div class="row">
-        <!-- Wrapper with Card -->
         <div class="card shadow-sm">
             <div class="card-body">
                 <div class="row">
-                    <!-- Menu Items -->
                     <div class="col-lg-8">
                         <div class="col-lg-12">
                             <div class="row g-3 mb-3">
@@ -22,7 +20,6 @@
                                     </div>
                                 </form>
                             </div>
-                            <!-- Scrollable Product List -->
                             <div class="row g-3 mb-3" style="max-height: 500px; overflow-y: auto;">
                                 @foreach ($produk as $item)
                                 <div class="col-sm-3">
@@ -40,7 +37,6 @@
                         </div>
                     </div>
 
-                    <!-- Current Order -->
                     <div class="col-lg-4">
                         <div class="card">
                             <div class="card-header bg-light">
@@ -51,7 +47,6 @@
                             </div>
                             <div class="card-body">
                                 <ul class="list-group mb-3" id="order-list">
-                                    <!-- Dynamic order list will appear here -->
                                 </ul>
                                 <div class="d-flex justify-content-between">
                                     <span>Subtotal:</span>
@@ -119,8 +114,6 @@
                                         </a>
                                     </td>
                                 </tr>
-
-
                                 @endforeach
                             </tbody>
                         </table>
@@ -147,7 +140,6 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Tabel Detail Transaksi -->
                 <div class="mb-3">
                     <h6>ID Transaksi</h6>
                     <p>{{ $item->id }}</p>
@@ -181,13 +173,12 @@
     </div>
 </div>
 @endforeach
-<!-- JavaScript to handle adding items to the current order -->
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         let orderItems = [];
         let subtotal = 0;
 
-        // Handle adding items to the order
         document.querySelectorAll('.add-to-order').forEach(button => {
             button.addEventListener('click', function() {
                 let id = this.getAttribute('data-id');
@@ -210,18 +201,15 @@
             });
         });
 
-        // Handle clearing all items
         document.getElementById('clear-all').addEventListener('click', function() {
             orderItems = [];
             updateOrder();
         });
 
-        // Handle discount input change
         document.getElementById('discount-input').addEventListener('input', function() {
             updateOrder();
         });
 
-        // Update the order list and totals
         function updateOrder() {
             const orderList = document.getElementById('order-list');
             orderList.innerHTML = '';
@@ -235,7 +223,8 @@
                 listItem.innerHTML = `
                     <div>
                         <strong>${item.name}</strong>
-                        <span class="badge bg-secondary">x${item.quantity}</span>
+                        <span class="badge bg-secondary" style="margin-right: 10px;">x${item.quantity}</span>
+                        <button class="btn btn-sm btn-danger remove-from-order" data-id="${item.id}" style="margin: auto;"><i class="ni ni-fat-delete"></i></button>
                     </div>
                     <span>Rp ${item.price * item.quantity}</span>
                 `;
@@ -249,21 +238,37 @@
 
             document.getElementById('subtotal').textContent = `Rp ${subtotal.toFixed(2)}`;
             document.getElementById('total').textContent = `Rp ${total.toFixed(2)}`;
+
+            document.querySelectorAll('.remove-from-order').forEach(button => {
+                button.addEventListener('click', function() {
+                    let id = this.getAttribute('data-id');
+                    let existingItem = orderItems.find(item => item.id === id);
+                    if (existingItem) {
+                        existingItem.quantity--;
+                        if (existingItem.quantity <= 0) {
+                            orderItems = orderItems.filter(item => item.id !== id);
+                        }
+                        updateOrder();
+                    }
+                });
+            });
         }
 
-        // Handle Add Transaksi click
         document.getElementById('add-transaction').addEventListener('click', function() {
             const discount = parseFloat(document.getElementById('discount-input').value) || 0;
             const total = parseFloat(document.getElementById('total').textContent.replace('Rp ', '').replace(',', '').trim());
 
             if (orderItems.length === 0) {
-                alert("No items in the order.");
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'No items in the order.'
+                });
                 return;
             }
 
-            // Prepare data for AJAX request
             const orderData = {
-                tanggal: new Date().toISOString().split('T')[0], // Current date in YYYY-MM-DD format
+                tanggal: new Date().toISOString().split('T')[0],
                 total_pembayaran: total,
                 diskon: discount,
                 items: orderItems.map(item => ({
@@ -273,7 +278,6 @@
                 }))
             };
 
-            // Send AJAX request to add transaction
             fetch("{{ route('transaksi.store') }}", {
                     method: "POST",
                     headers: {
@@ -285,17 +289,30 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        alert("Transaction added successfully.");
-                        orderItems = [];
-                        updateOrder(); // Reset order
-                        location.reload();
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Success',
+                            text: 'Transaksi berhasil ditambahkan.'
+                        }).then(() => {
+                            orderItems = [];
+                            updateOrder();
+                            location.reload();
+                        });
                     } else {
-                        alert("Failed to add transaction.");
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: data.error || 'Unknown error'
+                        });
                     }
                 })
                 .catch(error => {
                     console.error("Error:", error);
-                    alert("An error occurred while adding the transaction.");
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'An error occurred while adding the transaction.'
+                    });
                 });
         });
     });
