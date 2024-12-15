@@ -262,7 +262,7 @@
                 Swal.fire({
                     icon: 'error',
                     title: 'Error',
-                    text: 'No items in the order.'
+                    text: 'Tidak ada produk dalam transaksi.'
                 });
                 return;
             }
@@ -311,7 +311,7 @@
                     Swal.fire({
                         icon: 'error',
                         title: 'Error',
-                        text: 'An error occurred while adding the transaction.'
+                        text: 'Terjadi kesalahan saat menambahkan transaksi.'
                     });
                 });
         });

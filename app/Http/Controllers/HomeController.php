@@ -29,8 +29,41 @@ class HomeController extends Controller
     public function index()
     {
         $data['productsOutOfStock'] = Produk::where('stok', 0)->get();
+        $currentDay = Carbon::now()->day;
         $currentMonth = Carbon::now()->month;
         $currentYear = Carbon::now()->year;
+
+
+        $data['penjualanHariIni'] = Transaksi::whereYear('tanggal', $currentYear)
+            ->whereMonth('tanggal', $currentMonth)
+            ->whereDay('tanggal', $currentDay)
+            ->sum('total_pembayaran');
+
+        $yesterday = now()->subDay();
+        $penjualanKemarin = Transaksi::whereDate('tanggal', $yesterday->toDateString())->sum('total_pembayaran');
+
+        if ($penjualanKemarin > 0) {
+            $percentageChangeSumYesterday = (($data['penjualanHariIni'] - $penjualanKemarin) / $penjualanKemarin) * 100;
+        } else {
+            $percentageChangeSumYesterday = $data['penjualanHariIni'] > 0 ? 100 : 0;
+        }
+        $data['percentageChangeSumYesterday'] = $percentageChangeSumYesterday;
+
+
+        $data['transaksiHariIni'] = Transaksi::whereYear('tanggal', $currentYear)
+            ->whereMonth('tanggal', $currentMonth)
+            ->whereDay('tanggal', $currentDay)
+            ->count();
+
+        $yesterday = now()->subDay();
+        $transaksiKemarin = Transaksi::whereDate('tanggal', $yesterday->toDateString())->count();
+
+        if ($transaksiKemarin > 0) {
+            $percentageChangeYesterday = (($data['transaksiHariIni'] - $transaksiKemarin) / $transaksiKemarin) * 100;
+        } else {
+            $percentageChangeYesterday = $data['transaksiHariIni'] > 0 ? 100 : 0;
+        }
+        $data['percentageChangeYesterday'] = $percentageChangeYesterday;
 
         $data['transaksiBulanIni'] = Transaksi::whereYear('tanggal', $currentYear)
             ->whereMonth('tanggal', $currentMonth)
@@ -42,6 +75,7 @@ class HomeController extends Controller
 
         $previousMonth = Carbon::now()->subMonth()->month;
         $previousYear = Carbon::now()->subMonth()->year;
+
 
         $transaksiBulanLalu = Transaksi::whereYear('tanggal', $previousYear)
             ->whereMonth('tanggal', $previousMonth)
@@ -81,7 +115,7 @@ class HomeController extends Controller
 
         // Get the top-selling products today
         $today = Carbon::today();
-        $data['produkTerlarisHariIni'] = Produk::select('produks.nama_produk', 'produks.stok','produks.foto', DB::raw('SUM(detail_transaksis.jumlah) as total_terjual'))
+        $data['produkTerlarisHariIni'] = Produk::select('produks.nama_produk', 'produks.stok', 'produks.foto', DB::raw('SUM(detail_transaksis.jumlah) as total_terjual'))
             ->join('detail_transaksis', 'produks.id', '=', 'detail_transaksis.produk_id')
             ->join('transaksis', 'detail_transaksis.transaksi_id', '=', 'transaksis.id')
             ->whereDate('transaksis.tanggal', $today)
@@ -89,6 +123,8 @@ class HomeController extends Controller
             ->orderBy('total_terjual', 'DESC')
             ->take(5)
             ->get();
+
+
 
         return view('pages.dashboard', $data);
     }

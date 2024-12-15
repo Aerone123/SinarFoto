@@ -68,13 +68,17 @@
                     <div class="row">
                         <div class="col-8">
                             <div class="numbers">
-                                <p class="text-sm mb-0 text-uppercase font-weight-bold">Klien Baru</p>
+                                <p class="text-sm mb-0 text-uppercase font-weight-bold">Transaksi Hari Ini</p>
                                 <h5 class="font-weight-bolder">
-                                    +3,462
+                                    {{ number_format($transaksiHariIni) }}
                                 </h5>
                                 <p class="mb-0">
-                                    <span class="text-danger text-sm font-weight-bolder">-2%</span>
-                                    sejak kuartal terakhir
+                                    @if($percentageChangeYesterday < 0)
+                                        <span class="text-danger text-sm font-weight-bolder">{{ number_format($percentageChangeYesterday, 2) }}%</span>
+                                        @else
+                                        <span class="text-success text-sm font-weight-bolder">+{{ number_format($percentageChangeYesterday, 2) }}%</span>
+                                        @endif
+                                        sejak kemarin
                                 </p>
                             </div>
                         </div>
@@ -93,12 +97,17 @@
                     <div class="row">
                         <div class="col-8">
                             <div class="numbers">
-                                <p class="text-sm mb-0 text-uppercase font-weight-bold">Penjualan</p>
+                                <p class="text-sm mb-0 text-uppercase font-weight-bold">Penjualan Hari Ini</p>
                                 <h5 class="font-weight-bolder">
-                                    $103,430
+                                    Rp. {{ number_format($penjualanHariIni) }}
                                 </h5>
                                 <p class="mb-0">
-                                    <span class="text-success text-sm font-weight-bolder">+5%</span> sejak bulan lalu
+                                    @if($percentageChangeSumYesterday < 0)
+                                        <span class="text-danger text-sm font-weight-bolder">{{ number_format($percentageChangeSumYesterday, 2) }}%</span>
+                                        @else
+                                        <span class="text-success text-sm font-weight-bolder">+{{ number_format($percentageChangeSumYesterday, 2) }}%</span>
+                                        @endif
+                                        sejak kemarin
                                 </p>
                             </div>
                         </div>
